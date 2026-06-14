@@ -38,10 +38,10 @@
                     🎮 MSI Z790 Gaming WiFi
                 </div>
                 <canvas id="motherboard3D"></canvas>
-                <div class="absolute bottom-4 left-4 text-white/60 text-xs">
-                    <p>🖱️ Вращение: ЛКМ</p>
-                    <p>🔍 Масштаб: Колесо</p>
-                    <p>👆 Клик на компонент для информации</p>
+                <div class="absolute bottom-4 left-4 text-white/60 text-xs" id="controlsHint">
+                    <p>🖱️ Вращение: ЛКМ / 👆 Тап</p>
+                    <p>🔍 Масштаб: Колесо / ✊ Щипок</p>
+                    <p>👆 Тап на компонент</p>
                 </div>
                 <button onclick="toggleDebugPanel()" class="absolute top-4 right-4 bg-slate-700 hover:bg-slate-600 text-white px-3 py-1 rounded text-xs {% if not session.get('is_admin') %}hidden{% endif %}">
                     ⚙️ Настроить точки
@@ -177,30 +177,44 @@ function init3D() {
     canvas.addEventListener('click', on3DClick);
     canvas.addEventListener('mousemove', on3DMouseMove);
     
+    // ===== МЫШЬ (десктоп) =====
     let isDragging = false;
-    let previousMousePosition = { x: 0, y: 0 };
+    let previousPointerPos = { x: 0, y: 0 };
+    let pointerDownTime = 0;
+    let pointerMoved = false;
     
-    canvas.addEventListener('mousedown', (e) => {
+    function onPointerDown(clientX, clientY) {
         isDragging = true;
-        previousMousePosition = { x: e.clientX, y: e.clientY };
-    });
+        pointerMoved = false;
+        previousPointerPos = { x: clientX, y: clientY };
+        pointerDownTime = Date.now();
+    }
     
-    canvas.addEventListener('mousemove', (e) => {
+    function onPointerMove(clientX, clientY) {
         if (isDragging && threeModel) {
-            const deltaX = e.clientX - previousMousePosition.x;
-            const deltaY = e.clientY - previousMousePosition.y;
-            
+            const deltaX = clientX - previousPointerPos.x;
+            const deltaY = clientY - previousPointerPos.y;
+            if (Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2) {
+                pointerMoved = true;
+            }
             const rotationSpeed = 0.01;
             threeModel.rotation.y += deltaX * rotationSpeed;
             threeModel.rotation.x = Math.max(-0.5, Math.min(0.5, threeModel.rotation.x + deltaY * rotationSpeed));
-            
-            previousMousePosition = { x: e.clientX, y: e.clientY };
+            previousPointerPos = { x: clientX, y: clientY };
         }
-    });
+    }
     
+    function onPointerUp() {
+        isDragging = false;
+    }
+    
+    // Мышиные события
+    canvas.addEventListener('mousedown', (e) => onPointerDown(e.clientX, e.clientY));
+    canvas.addEventListener('mousemove', (e) => onPointerMove(e.clientX, e.clientY));
     canvas.addEventListener('mouseup', () => isDragging = false);
     canvas.addEventListener('mouseleave', () => isDragging = false);
     
+    // Колёсико мыши
     canvas.addEventListener('wheel', (e) => {
         e.preventDefault();
         const delta = e.deltaY * 0.01;
@@ -209,7 +223,49 @@ function init3D() {
         threeCamera.position.addScaledVector(direction, delta);
         const dist = threeCamera.position.length();
         threeCamera.position.setLength(Math.max(2, Math.min(10, dist)));
-    });
+    }, { passive: false });
+    
+    // ===== ТАЧ (мобильные) =====
+    let lastTouchDist = 0;
+    
+    canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (e.touches.length === 1) {
+            const t = e.touches[0];
+            onPointerDown(t.clientX, t.clientY);
+        } else if (e.touches.length === 2) {
+            // Начало пинч-зума
+            isDragging = false;
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            lastTouchDist = Math.sqrt(dx * dx + dy * dy);
+        }
+    }, { passive: false });
+    
+    canvas.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        if (e.touches.length === 1) {
+            const t = e.touches[0];
+            onPointerMove(t.clientX, t.clientY);
+        } else if (e.touches.length === 2) {
+            // Пинч-зум
+            const dx = e.touches[0].clientX - e.touches[1].clientX;
+            const dy = e.touches[0].clientY - e.touches[1].clientY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const delta = (lastTouchDist - dist) * 0.02;
+            const direction = new THREE.Vector3();
+            threeCamera.getWorldDirection(direction);
+            threeCamera.position.addScaledVector(direction, delta);
+            const d = threeCamera.position.length();
+            threeCamera.position.setLength(Math.max(2, Math.min(10, d)));
+            lastTouchDist = dist;
+        }
+    }, { passive: false });
+    
+    canvas.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        isDragging = false;
+    }, { passive: false });
     
     animate3D();
     is3DInitialized = true;
