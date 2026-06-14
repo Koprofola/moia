@@ -16,86 +16,355 @@ body { background: #F8FAFC; }
 section.section { display: block !important; }
 section.section.hidden { display: none !important; }
 
-/* Mobile responsive */
-@media (max-width: 640px) {
+/* ============================================
+   МОБИЛЬНОЕ МЕНЮ (гамбургер)
+   ============================================ */
+.mobile-menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    color: #475569;
+    transition: all 0.2s;
+}
+.mobile-menu-btn:hover { background: #F1F5F9; }
+.mobile-menu-btn svg { width: 24px; height: 24px; }
+
+.mobile-nav {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.2s ease;
+}
+.mobile-nav.open { display: block; }
+
+.mobile-nav-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 85vw;
+    background: white;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+    overflow-y: auto;
+    animation: slideInLeft 0.25s ease;
+    z-index: 101;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideInLeft { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+.mobile-nav-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid #E2E8F0;
+}
+.mobile-nav-header h2 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0F172A;
+}
+.mobile-nav-close {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    border: none;
+    background: #F1F5F9;
+    cursor: pointer;
+    color: #64748B;
+    transition: all 0.2s;
+}
+.mobile-nav-close:hover { background: #E2E8F0; }
+
+.mobile-nav-items {
+    padding: 8px;
+}
+.mobile-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    border: none;
+    background: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: #334155;
+    text-align: left;
+    transition: all 0.15s;
+}
+.mobile-nav-item:hover { background: #F1F5F9; color: #2563EB; }
+.mobile-nav-item:active { background: #EFF6FF; }
+.mobile-nav-item svg { width: 20px; height: 20px; flex-shrink: 0; }
+
+.mobile-nav-footer {
+    padding: 16px;
+    border-top: 1px solid #E2E8F0;
+    margin-top: 8px;
+}
+.mobile-nav-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #F8FAFC;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #475569;
+}
+
+/* ============================================
+   ДЕСКТОП ПО УМОЛЧАНИЮ
+   ============================================ */
+
+/* ============================================
+   ПЛАНШЕТЫ (768px и меньше)
+   ============================================ */
+@media (max-width: 768px) {
     body { font-size: 14px; }
-    header .max-w-7xl { padding-left: 8px; padding-right: 8px; }
+    
+    /* Хедер */
+    header .h-16 { height: auto; min-height: 56px; padding: 8px 0; }
+    header .max-w-7xl { padding-left: 12px; padding-right: 12px; }
     header .text-lg { font-size: 14px; }
     header .text-xs { font-size: 10px; }
     header .w-10 { width: 28px; height: 28px; }
-    header .h-16 { height: auto; min-height: 56px; padding: 8px 0; }
-    header .flex { flex-wrap: wrap !important; justify-content: space-between !important; }
-    header .justify-between { justify-content: space-between !important; }
-    header > div { flex-wrap: wrap !important; }
-    header .gap-3 { gap: 6px !important; }
-    header .items-center { align-items: center !important; }
-    nav { 
-        order: 3; 
-        width: 100%; 
-        overflow-x: auto; 
-        gap: 4px !important; 
-        padding: 8px 0;
-        justify-content: flex-start !important;
-        flex-wrap: nowrap !important;
-        -webkit-overflow-scrolling: touch;
-    }
-    nav button, nav a { 
-        font-size: 11px; 
-        padding: 4px 8px; 
-        white-space: nowrap;
-        flex-shrink: 0;
-    }
-    header .gap-4 { gap: 8px !important; }
+    header .gap-3 { gap: 8px !important; }
+    header .gap-4 { gap: 6px !important; }
     header .px-4 { padding-left: 8px; padding-right: 8px; }
+    
+    /* Десктоп навигация прячем, показываем гамбургер */
+    header nav { display: none !important; }
+    .mobile-menu-btn { display: flex !important; align-items: center; justify-content: center; }
+    
+    /* Профиль справа компактнее */
+    header .items-center.gap-3 > span { display: none; }
+    header .items-center.gap-3 > a[href*="logout"] { 
+        font-size: 0; 
+        width: 36px; 
+        height: 36px; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+        background: #F1F5F9;
+        border-radius: 8px;
+    }
+    header .items-center.gap-3 > a[href*="logout"]::after {
+        content: '✕';
+        font-size: 16px;
+    }
+    header button.flex.items-center.gap-2 { 
+        padding: 6px 8px !important;
+        gap: 4px !important;
+    }
+    header button.flex.items-center.gap-2 span { font-size: 12px; }
+    header button.flex.items-center.gap-2 svg { width: 16px; height: 16px; }
+    
+    /* Контент */
     main { padding: 12px !important; }
-    .grid { gap: 12px !important; }
-    .p-6 { padding: 12px !important; }
+    .p-6 { padding: 14px !important; }
     .p-8 { padding: 16px !important; }
-    h1 { font-size: 20px !important; }
-    h2 { font-size: 18px !important; }
+    
+    /* Типография */
+    h1 { font-size: 22px !important; }
+    h2 { font-size: 19px !important; }
     h3 { font-size: 16px !important; }
     .text-xl { font-size: 16px; }
     .text-2xl { font-size: 20px; }
-    .text-3xl { font-size: 24px; }
-    .text-4xl { font-size: 24px; }
-    .rounded-xl { border-radius: 8px; }
-    .shadow-sm { box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-    .hidden { display: none !important; }
-    .flex { flex-wrap: wrap; }
-    #homeSection .grid-cols-1 { grid-template-columns: 1fr; }
-    #homeSection .grid-cols-2 { grid-template-columns: 1fr; }
-    #homeSection .grid-cols-4 { grid-template-columns: 1fr 1fr; }
-    #homeSection .max-w-4xl { max-width: 100%; }
-    #learningSection .grid-cols-1 { grid-template-columns: 1fr; }
-    #learningSection .grid-cols-2 { grid-template-columns: 1fr; }
-    #learningSection .grid-cols-4 { grid-template-columns: 1fr; }
-    #questSection .grid-cols-1 { grid-template-columns: 1fr; }
-    #questSection .grid-cols-2 { grid-template-columns: 1fr; }
-    #dashboardSection .grid-cols-1 { grid-template-columns: 1fr; }
-    #dashboardSection .grid-cols-2 { grid-template-columns: 1fr; }
-    #dashboardSection .grid-cols-3 { grid-template-columns: 1fr; }
-    #atlasSection .grid-cols-1 { grid-template-columns: 1fr; }
-    #atlasSection .grid-cols-3 { grid-template-columns: 1fr; }
-    #atlasContainer { min-height: 250px !important; }
-    .lesson-modal { padding: 12px !important; }
-    .lesson-modal .max-w-3xl { max-width: 95%; }
-    .lesson-modal .max-h-[80vh] { max-height: 90vh; }
-    #editorLessonList { width: 100% !important; min-width: 100% !important; flex: none !important; }
-    #lessonEditPanel { width: 100% !important; }
-    #lessonEditForm .max-w-5xl { max-width: 100%; }
-    #lessonEditForm .grid { grid-template-columns: 1fr !important; }
+    .text-3xl { font-size: 22px; }
+    .text-4xl { font-size: 22px; }
+    
+    /* Скругления */
+    .rounded-xl { border-radius: 10px; }
+    
+    /* ===== СЕКЦИЯ HOME ===== */
+    #homeSection .text-center.py-12 { padding-top: 24px; padding-bottom: 24px; }
+    #homeSection .w-24.h-24 { width: 64px; height: 64px; }
+    #homeSection .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-5 { 
+        grid-template-columns: 1fr 1fr !important; 
+        gap: 10px !important;
+        max-width: 100% !important;
+    }
+    #homeSection .grid button .p-6 { padding: 12px !important; }
+    #homeSection .grid button i { width: 24px; height: 24px; margin-bottom: 6px !important; }
+    #homeSection .grid button h3 { font-size: 13px !important; }
+    #homeSection .grid button p { font-size: 11px !important; }
+    
+    /* ===== СЕКЦИЯ АТЛАС ===== */
+    #atlasSection .lg\:grid-cols-3 { grid-template-columns: 1fr !important; }
+    #atlasSection .lg\:col-span-2 { grid-column: span 1 !important; }
+    #atlasSection .aspect-\[4\/3\] { aspect-ratio: 3/2 !important; }
+    #atlasSection .flex-wrap:first-of-type { flex-direction: column; }
+    #atlasSection .flex-wrap:first-of-type > div:first-child { margin-bottom: 8px; }
+    #atlasSection .flex.gap-2 { justify-content: flex-start; }
+    #atlasSection .px-4.py-2 { padding: 6px 12px; font-size: 12px; }
+    
+    /* ===== СЕКЦИЯ LEARNING ===== */
+    #learningSection .lg\:grid-cols-4 { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+    #learningSection .gap-6 { gap: 10px !important; }
+    
+    /* ===== СЕКЦИЯ КВЕСТ ===== */
+    #questSection .lg\:grid-cols-2 { grid-template-columns: 1fr !important; }
+    
+    /* ===== СЕКЦИЯ ПРЕЗЕНТАЦИИ ===== */
+    #presentationsSection .lg\:grid-cols-3 { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+    #presentationsSection .p-8 { padding: 14px !important; }
+    
+    /* ===== СЕКЦИЯ ДЭШБОРД ===== */
+    #dashboardSection .lg\:grid-cols-3 { grid-template-columns: 1fr !important; }
+    #dashboardSection .lg\:col-span-2 { grid-column: span 1 !important; }
+    #dashboardSection .md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+    #dashboardSection .grid-cols-3 { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+    
+    /* ===== МОДАЛКИ ===== */
+    .fixed.inset-0.items-center { padding: 12px; }
+    .max-w-lg.w-full.mx-4 { margin: 0; max-width: 100%; }
+    .max-w-2xl.w-full.mx-4 { margin: 0; max-width: 100%; }
+    .max-w-md.w-full.mx-4 { margin: 0; max-width: 100%; max-height: 90vh; overflow-y: auto; }
+    [id$="Modal"] .p-6 { padding: 14px !important; }
+    [id$="Modal"] .sticky { position: static !important; }
+    
+    /* ===== ВЬЮВЕР ПРЕЗЕНТАЦИЙ ===== */
+    #presentationViewer .p-4 { padding: 10px; flex-wrap: wrap; gap: 8px; }
+    #presentationViewer .flex.items-center.gap-4 { gap: 8px; }
+    #presentationViewer .w-10.h-10 { width: 32px; height: 32px; }
+    #presentationViewer h2 { font-size: 14px; }
+    #presentationViewer p { display: none; }
+    #presentationViewer a.px-4.py-2 { padding: 6px 12px; font-size: 12px; }
+    
+    /* ===== АДМИНКА ===== */
+    /* Табы */
+    .flex.gap-2 .tab-btn { 
+        font-size: 11px !important; 
+        padding: 6px 10px !important;
+        white-space: nowrap;
+    }
+    .flex.items-center.justify-between.mb-6,
+    .flex.items-center.justify-between.mb-8 { 
+        flex-wrap: wrap; 
+        gap: 8px;
+    }
+    .flex.items-center.justify-between.mb-6 > div,
+    .flex.items-center.justify-between.mb-8 > div { 
+        width: 100%; 
+    }
+    .flex.items-center.justify-between.mb-6 > div:last-child,
+    .flex.items-center.justify-between.mb-8 > div:last-child {
+        width: auto;
+    }
+    .flex.gap-2 { flex-wrap: wrap; }
+    .flex.flex-wrap.gap-3 { flex-direction: column; align-items: stretch !important; }
+    .flex.flex-wrap.gap-3 > div { width: 100%; }
+    .flex.flex-wrap.gap-3 > div input { width: 100% !important; }
+    
+    /* Таблицы админки */
+    .overflow-x-auto table { font-size: 12px; }
+    .overflow-x-auto table th, 
+    .overflow-x-auto table td { 
+        padding: 8px 6px !important;
+        white-space: nowrap;
+    }
+    .overflow-x-auto table td .flex.gap-2 { flex-direction: column; gap: 4px; }
+    
+    /* Редактор уроков */
+    #lessonListPanel { width: 100% !important; min-width: 100% !important; max-height: 200px; }
+    #lessonEditPanel { padding: 14px !important; }
+    #lessonEditForm .grid.grid-cols-4 { grid-template-columns: 1fr !important; }
     #lessonEditForm .col-span-2 { grid-column: span 1 !important; }
-    .prose { font-size: 14px; }
-    .prose img { max-width: 100% !important; height: auto !important; }
-    header .justify-between > nav { order: 2; width: auto; }
-    header .justify-between > div:last-child { order: 3; }
-    header .justify-between > div:first-child { order: 1; }
+    #lessonEditForm .flex.items-center.justify-between { flex-direction: column; gap: 12px; }
+    #lessonEditForm .flex.items-center.justify-between > div { width: 100%; }
+    #lessonEditForm .flex.items-center.justify-between > div:first-child { flex-direction: column; align-items: flex-start; }
+    #lessonEditForm .flex.items-center.gap-3 { flex-wrap: wrap; }
+    
+    /* Статистика админки */
+    .md\:grid-cols-4.tab-content { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+    .md\:grid-cols-4.tab-content .rounded-xl.p-5 { padding: 12px !important; }
+    .md\:grid-cols-4.tab-content i { width: 24px; height: 24px; }
+    .md\:grid-cols-4.tab-content p.text-3xl { font-size: 20px !important; }
+    
+    /* Формы добавления пользователя */
+    #addUserForm .flex.flex-wrap { flex-direction: column; }
+    #addUserForm .flex.flex-wrap > div { width: 100%; }
+    #addUserForm input.w-48 { width: 100% !important; }
+    
+    /* ===== СТРАНИЦЫ ВХОДА / РЕГИСТРАЦИИ ===== */
+    .max-w-md.mx-auto.px-4.py-16 { padding-top: 40px; padding-bottom: 40px; }
+    
+    /* ===== ПРОФИЛЬ ===== */
+    .max-w-4xl.mx-auto.px-4.py-8 .md\:grid-cols-2 { grid-template-columns: 1fr !important; }
+    
+    /* ===== ПРЕЗЕНТАЦИИ (отдельная страница) ===== */
+    .max-w-6xl.mx-auto .lg\:grid-cols-3 { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
 }
 
-/* Extra small phones */
-@media (max-width: 400px) {
-    header .gap-3 { gap: 4px !important; }
-    nav { gap: 2px !important; }
-    nav button, nav a { font-size: 10px; padding: 4px 6px; }
-    .grid-cols-4 { grid-template-columns: 1fr !important; }
+/* ============================================
+   ТЕЛЕФОНЫ (480px и меньше)
+   ============================================ */
+@media (max-width: 480px) {
+    /* Типография ещё мельче */
+    h1 { font-size: 20px !important; }
+    h2 { font-size: 17px !important; }
+    
+    main { padding: 8px !important; }
+    .p-6 { padding: 12px !important; }
+    .p-8 { padding: 12px !important; }
+    
+    /* Home секция - все в 1 колонку */
+    #homeSection .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-5 { 
+        grid-template-columns: 1fr 1fr !important;
+    }
+    
+    /* Learning в 1 колонку */
+    #learningSection .lg\:grid-cols-4 { grid-template-columns: 1fr 1fr !important; }
+    
+    /* Презентации в 1 колонку */
+    #presentationsSection .lg\:grid-cols-3 { grid-template-columns: 1fr !important; }
+    .max-w-6xl.mx-auto .lg\:grid-cols-3 { grid-template-columns: 1fr !important; }
+    
+    /* Админ табы - скролл */
+    .flex.gap-2 .tab-btn { font-size: 10px !important; padding: 4px 8px !important; }
+    
+    /* Атлас - кнопки */
+    #atlasSection .flex.gap-2 button { font-size: 11px; padding: 5px 10px; }
+    
+    /* Мобильное меню шире */
+    .mobile-nav-panel { width: 100%; max-width: 100%; }
+    
+    /* Статистика админки в 2 колонки */
+    .md\:grid-cols-4.tab-content { grid-template-columns: 1fr 1fr !important; }
+    
+    /* Скрыть username в хедере */
+    header .items-center.gap-3 > a[href*="admin"] span { display: none; }
+}
+
+/* ============================================
+   ОЧЕНЬ МАЛЕНЬКИЕ ТЕЛЕФОНЫ (360px и меньше)
+   ============================================ */
+@media (max-width: 360px) {
+    /* Home секция - 1 колонка */
+    #homeSection .grid-cols-1.md\:grid-cols-2.lg\:grid-cols-5 { 
+        grid-template-columns: 1fr !important;
+    }
+    #learningSection .lg\:grid-cols-4 { grid-template-columns: 1fr !important; }
+    #presentationsSection .lg\:grid-cols-3 { grid-template-columns: 1fr !important; }
+    
+    /* Админка метрики */
+    .md\:grid-cols-4.tab-content { grid-template-columns: 1fr !important; }
+    .md\:grid-cols-4.tab-content .rounded-xl.p-5 { padding: 10px !important; }
 }
