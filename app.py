@@ -125,6 +125,13 @@ def init_db():
             ('admin', hash_password('admin123'), 'Администратор')
         )
     
+    guest = cursor.execute('SELECT id FROM users WHERE username = ?', ('guest',)).fetchone()
+    if not guest:
+        cursor.execute(
+            'INSERT INTO users (username, password, name, is_admin) VALUES (?, ?, ?, 0)',
+            ('guest', hash_password('guest'), 'Гость')
+        )
+    
     conn.commit()
     conn.close()
 
@@ -184,6 +191,22 @@ def login():
             flash('Неверный логин или пароль', 'error')
     
     return render_template('login.html')
+
+@app.route('/guest-login')
+def guest_login():
+    conn = get_db_connection()
+    guest = conn.execute('SELECT * FROM users WHERE username = ?', ('guest',)).fetchone()
+    conn.close()
+    
+    if guest:
+        session['user_id'] = guest['id']
+        session['username'] = guest['username']
+        session['is_admin'] = False
+        flash('Вы вошли как гость', 'success')
+        return redirect(url_for('index'))
+    else:
+        flash('Ошибка входа как гость', 'error')
+        return redirect(url_for('login'))
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
